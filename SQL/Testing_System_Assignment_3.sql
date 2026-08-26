@@ -138,7 +138,6 @@ LEFT JOIN account_table a ON d.department_id = a.department_id AND p.position_id
 GROUP BY d.department_id, d.department_name, p.position_name, p.position_id
 ORDER BY d.department_id, p.position_id;
 
-
 -- Question 12: Lấy thông tin chi tiết của câu hỏi bao gồm: thông tin cơ bản của question, loại câu hỏi, ai là người tạo ra câu hỏi, câu trả lời là gì
 SELECT 
     q.question_id,
@@ -170,6 +169,7 @@ SELECT
 FROM group_table g
 LEFT JOIN group_account ga ON g.group_id = ga.group_id
 WHERE ga.account_id IS NULL;
+-- left excluding join
 
 
 -- Question 15: Lấy ra group không có account nào

@@ -299,7 +299,7 @@ BEGIN
     )
     SELECT 
         ms.year_month_label,
-        CASE 
+        CASE
             WHEN COUNT(q.question_id) = 0 THEN 'không có câu hỏi nào trong tháng'
             ELSE CAST(COUNT(q.question_id) AS CHAR)
         END AS question_status
@@ -309,3 +309,4 @@ BEGIN
     ORDER BY ms.year_month_label DESC;
 END$$
 DELIMITER ;
+call sp_count_questions_last_6_months();

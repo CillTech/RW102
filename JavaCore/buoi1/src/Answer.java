@@ -1,18 +1,18 @@
 public class Answer {
-    private int answerId;
+    private int id;
     private String content;
     private Question question;
     private boolean isCorrect;
 
-    public Answer(int answerId, String content, Question question, boolean isCorrect) {
-        this.answerId = answerId;
+    public Answer(int id, String content, Question question, boolean isCorrect) {
+        this.id = id;
         this.content = content;
         this.question = question;
         this.isCorrect = isCorrect;
     }
 
-    public int getAnswerId() { return answerId; }
-    public void setAnswerId(int answerId) { this.answerId = answerId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
     public Question getQuestion() { return question; }
@@ -22,7 +22,7 @@ public class Answer {
 
     @Override
     public String toString() {
-        return "Answer [ID=" + answerId + ", Content=" + content +
+        return "Answer [ID=" + id + ", Content=" + content +
                 ", Question=" + (question != null ? question.getContent() : null) +
                 ", IsCorrect=" + isCorrect + "]";
     }

@@ -1,19 +1,19 @@
 public class Department {
-    private int departmentId;
+    private int id;
     private String departmentName;
 
-    public Department(int departmentId, String departmentName) {
-        this.departmentId = departmentId;
+    public Department(int id, String departmentName) {
+        this.id = id;
         this.departmentName = departmentName;
     }
 
-    public int getDepartmentId() { return departmentId; }
-    public void setDepartmentId(int departmentId) { this.departmentId = departmentId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getDepartmentName() { return departmentName; }
     public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
 
     @Override
     public String toString() {
-        return "Department [ID=" + departmentId + ", Name=" + departmentName + "]";
+        return "Department [ID=" + id + ", Name=" + departmentName + "]";
     }
 }

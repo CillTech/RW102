@@ -1,15 +1,15 @@
 import java.time.LocalDate;
 
 public class Question {
-    private int questionId;
+    private int id;
     private String content;
     private CategoryQuestion category;
     private TypeQuestion type;
     private Account creator;
     private LocalDate createDate;
 
-    public Question(int questionId, String content, CategoryQuestion category, TypeQuestion type, Account creator, LocalDate createDate) {
-        this.questionId = questionId;
+    public Question(int id, String content, CategoryQuestion category, TypeQuestion type, Account creator, LocalDate createDate) {
+        this.id = id;
         this.content = content;
         this.category = category;
         this.type = type;
@@ -17,8 +17,8 @@ public class Question {
         this.createDate = createDate;
     }
 
-    public int getQuestionId() { return questionId; }
-    public void setQuestionId(int questionId) { this.questionId = questionId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
     public CategoryQuestion getCategory() { return category; }
@@ -32,7 +32,7 @@ public class Question {
 
     @Override
     public String toString() {
-        return "Question [ID=" + questionId + ", Content=" + content +
+        return "Question [ID=" + id + ", Content=" + content +
                 ", Category=" + (category != null ? category.getCategoryName() : null) +
                 ", Creator=" + (creator != null ? creator.getFullName() : null) + "]";
     }

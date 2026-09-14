@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 
 public class Exam {
-    private int examId;
+    private int id;
     private String code;
     private String title;
     private CategoryQuestion category;
@@ -9,8 +9,8 @@ public class Exam {
     private Account creator;
     private LocalDate createDate;
 
-    public Exam(int examId, String code, String title, CategoryQuestion category, int duration, Account creator, LocalDate createDate) {
-        this.examId = examId;
+    public Exam(int id, String code, String title, CategoryQuestion category, int duration, Account creator, LocalDate createDate) {
+        this.id = id;
         this.code = code;
         this.title = title;
         this.category = category;
@@ -19,8 +19,8 @@ public class Exam {
         this.createDate = createDate;
     }
 
-    public int getExamId() { return examId; }
-    public void setExamId(int examId) { this.examId = examId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getCode() { return code; }
     public void setCode(String code) { this.code = code; }
     public String getTitle() { return title; }
@@ -36,7 +36,7 @@ public class Exam {
 
     @Override
     public String toString() {
-        return "Exam [ID=" + examId + ", Code=" + code + ", Title=" + title +
+        return "Exam [ID=" + id + ", Code=" + code + ", Title=" + title +
                 ", Category=" + (category != null ? category.getCategoryName() : null) +
                 ", Duration=" + duration + " mins, Creator=" + (creator != null ? creator.getFullName() : null) + "]";
     }

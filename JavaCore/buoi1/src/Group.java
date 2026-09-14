@@ -1,20 +1,20 @@
 import java.time.LocalDate;
 
 public class Group {
-    private int groupId;
+    private int id;
     private String groupName;
     private Account creator;
     private LocalDate createDate;
 
-    public Group(int groupId, String groupName, Account creator, LocalDate createDate) {
-        this.groupId = groupId;
+    public Group(int id, String groupName, Account creator, LocalDate createDate) {
+        this.id = id;
         this.groupName = groupName;
         this.creator = creator;
         this.createDate = createDate;
     }
 
-    public int getGroupId() { return groupId; }
-    public void setGroupId(int groupId) { this.groupId = groupId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getGroupName() { return groupName; }
     public void setGroupName(String groupName) { this.groupName = groupName; }
     public Account getCreator() { return creator; }
@@ -24,7 +24,7 @@ public class Group {
 
     @Override
     public String toString() {
-        return "Group [ID=" + groupId + ", Name=" + groupName +
+        return "Group [ID=" + id + ", Name=" + groupName +
                 ", Creator=" + (creator != null ? creator.getFullName() : null) + ", CreateDate=" + createDate + "]";
     }
 }

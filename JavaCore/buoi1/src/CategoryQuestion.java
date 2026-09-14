@@ -1,19 +1,19 @@
 public class CategoryQuestion {
-    private int categoryId;
+    private int id;
     private String categoryName;
 
-    public CategoryQuestion(int categoryId, String categoryName) {
-        this.categoryId = categoryId;
+    public CategoryQuestion(int id, String categoryName) {
+        this.id = id;
         this.categoryName = categoryName;
     }
 
-    public int getCategoryId() { return categoryId; }
-    public void setCategoryId(int categoryId) { this.categoryId = categoryId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getCategoryName() { return categoryName; }
     public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 
     @Override
     public String toString() {
-        return "CategoryQuestion [ID=" + categoryId + ", Name=" + categoryName + "]";
+        return "CategoryQuestion [ID=" + id + ", Name=" + categoryName + "]";
     }
 }

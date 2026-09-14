@@ -1,7 +1,7 @@
 import java.time.LocalDate;
 
 public class Account {
-    private int accountId;
+    private int id;
     private String email;
     private String username;
     private String fullName;
@@ -9,8 +9,8 @@ public class Account {
     private Position position;
     private LocalDate createDate;
 
-    public Account(int accountId, String email, String username, String fullName, Department department, Position position, LocalDate createDate) {
-        this.accountId = accountId;
+    public Account(int id, String email, String username, String fullName, Department department, Position position, LocalDate createDate) {
+        this.id = id;
         this.email = email;
         this.username = username;
         this.fullName = fullName;
@@ -19,8 +19,8 @@ public class Account {
         this.createDate = createDate;
     }
 
-    public int getAccountId() { return accountId; }
-    public void setAccountId(int accountId) { this.accountId = accountId; }
+    public int getid() { return id; }
+    public void setid(int id) { this.id = id; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getUsername() { return username; }
@@ -36,7 +36,7 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account [ID=" + accountId + ", Email=" + email + ", Username=" + username +
+        return "Account [ID=" + id + ", Email=" + email + ", Username=" + username +
                 ", FullName=" + fullName + ", Department=" + (department != null ? department.getDepartmentName() : null) +
                 ", Position=" + (position != null ? position.getPositionName() : null) + ", CreateDate=" + createDate + "]";
     }

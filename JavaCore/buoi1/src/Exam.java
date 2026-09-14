@@ -37,7 +37,7 @@ public class Exam {
     @Override
     public String toString() {
         return "Exam [ID=" + id + ", Code=" + code + ", Title=" + title +
-                ", Category=" + (category != null ? category.getCategoryName() : null) +
+                ", Category=" + (category != null ? category.getName() : null) +
                 ", Duration=" + duration + " mins, Creator=" + (creator != null ? creator.getFullName() : null) + "]";
     }
 }

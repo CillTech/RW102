@@ -37,7 +37,7 @@ public class Account {
     @Override
     public String toString() {
         return "Account [ID=" + id + ", Email=" + email + ", Username=" + username +
-                ", FullName=" + fullName + ", Department=" + (department != null ? department.getDepartmentName() : null) +
-                ", Position=" + (position != null ? position.getPositionName() : null) + ", CreateDate=" + createDate + "]";
+                ", FullName=" + fullName + ", Department=" + (department != null ? department.getName() : null) +
+                ", Position=" + (position != null ? position.getName() : null) + ", CreateDate=" + createDate + "]";
     }
 }

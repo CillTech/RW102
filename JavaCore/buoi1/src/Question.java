@@ -33,7 +33,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question [ID=" + id + ", Content=" + content +
-                ", Category=" + (category != null ? category.getCategoryName() : null) +
+                ", Category=" + (category != null ? category.getName() : null) +
                 ", Creator=" + (creator != null ? creator.getFullName() : null) + "]";
     }
 }

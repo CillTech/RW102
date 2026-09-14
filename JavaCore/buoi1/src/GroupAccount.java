@@ -20,7 +20,7 @@ public class GroupAccount {
 
     @Override
     public String toString() {
-        return "GroupAccount [Group=" + (group != null ? group.getGroupName() : null) +
+        return "GroupAccount [Group=" + (group != null ? group.getName() : null) +
                 ", Account=" + (account != null ? account.getFullName() : null) + ", JoinDate=" + joinDate + "]";
     }
 }

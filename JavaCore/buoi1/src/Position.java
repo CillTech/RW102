@@ -1,19 +1,19 @@
 public class Position {
     private int id;
-    private PositionName positionName;
+    private PositionName name;
 
     public Position(int id, PositionName positionName) {
         this.id = id;
-        this.positionName = positionName;
+        this.name = positionName;
     }
 
     public int getid() { return id; }
     public void setid(int id) { this.id = id; }
-    public PositionName getPositionName() { return positionName; }
-    public void setPositionName(PositionName positionName) { this.positionName = positionName; }
+    public PositionName getName() { return name; }
+    public void setName(PositionName name) { this.name = name; }
 
     @Override
     public String toString() {
-        return "Position [ID=" + id + ", Name=" + positionName + "]";
+        return "Position [ID=" + id + ", Name=" + name + "]";
     }
 }

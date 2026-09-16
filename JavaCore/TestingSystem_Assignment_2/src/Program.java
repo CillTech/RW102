@@ -1,6 +1,6 @@
 import java.time.LocalDate;
 
-public class Exercise2_FlowControl {
+public class Program {
 
     static Department dept1 = new Department(1, "Sale");
     static Department dept2 = new Department(2, "Marketing");

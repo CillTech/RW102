@@ -89,6 +89,9 @@ public class Program {
     public static void question5() {
         int accountCount = countAccountsInGroup(group1);
         switch (accountCount) {
+            case 0:
+                System.out.println("Nhóm chưa có thành viên");
+                break;
             case 1:
                 System.out.println("Nhóm có một thành viên");
                 break;

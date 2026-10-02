@@ -126,7 +126,7 @@ public class QLCB implements IQLCB {
         if (repo.xoaTheoTen(ten)) {
             System.out.println("Đã xóa thành công cán bộ tên: " + ten + " khỏi Database.");
         } else {
-            System.out.println("Không tìm thấy cán bộ nào có tên chính xác là: " + ten + " hoặc xóa thất bại.");
+            System.out.println("Không tìm thấy cán bộ nào có tên là: " + ten + " hoặc xóa thất bại.");
         }
     }
 }

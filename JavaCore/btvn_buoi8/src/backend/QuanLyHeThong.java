@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuanLyHeThong {
+public class QuanLyHeThong implements IQLHT {
 
     // 1. Hiển thị toàn bộ account
     public void showAllAccounts() {

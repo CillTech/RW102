@@ -1,18 +1,14 @@
 package backend;
 
-import entity.CanBo;
-import entity.CongNhan;
-import entity.GioiTinh;
-import entity.KySu;
-import entity.NhanVien;
+import dao.CanBoRepository;
+import entity.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class QLCB implements IQLCB {
 
-    private List<CanBo> canBoList;
+    private CanBoRepository repo = new CanBoRepository();
     private Scanner sc = new Scanner(System.in);
 
     @Override
@@ -24,7 +20,6 @@ public class QLCB implements IQLCB {
         System.out.print("Nhập họ tên: ");
         String hoTen = sc.nextLine();
 
-        // Sử dụng Integer.parseInt(sc.nextLine()) để tránh bẫy trôi lệnh (Scanner newline issue)
         System.out.print("Nhập tuổi: ");
         int tuoi = Integer.parseInt(sc.nextLine());
 
@@ -40,32 +35,32 @@ public class QLCB implements IQLCB {
         System.out.print("Nhập địa chỉ: ");
         String diaChi = sc.nextLine();
 
-        // Tùy thuộc vào loại cán bộ để nhập thêm thuộc tính riêng và khởi tạo Object tương ứng
+        CanBo cb = null;
         switch (loai) {
             case "1":
                 System.out.print("Nhập bậc công nhân (số nguyên): ");
                 int bac = Integer.parseInt(sc.nextLine());
-                CanBo cn = new CongNhan(hoTen, tuoi, gioiTinh, diaChi, bac);
-                canBoList.add(cn);
-                System.out.println("Thêm mới Công nhân thành công!");
+                cb = new CongNhan(hoTen, tuoi, gioiTinh, diaChi, Loai.CN, bac);
                 break;
             case "2":
                 System.out.print("Nhập ngành đào tạo kỹ sư: ");
                 String nganh = sc.nextLine();
-                CanBo ks = new KySu(hoTen, tuoi, gioiTinh, diaChi, nganh);
-                canBoList.add(ks);
-                System.out.println("Thêm mới Kỹ sư thành công!");
+                cb = new KySu(hoTen, tuoi, gioiTinh, diaChi, Loai.KS, nganh);
                 break;
             case "3":
                 System.out.print("Nhập công việc nhân viên: ");
                 String congViec = sc.nextLine();
-                CanBo nv = new NhanVien(hoTen, tuoi, gioiTinh, diaChi, congViec);
-                canBoList.add(nv);
-                System.out.println("Thêm mới Nhân viên thành công!");
+                cb = new NhanVien(hoTen, tuoi, gioiTinh, diaChi, Loai.NV, congViec);
                 break;
             default:
                 System.out.println("Lựa chọn không hợp lệ. Hủy thêm mới.");
-                break;
+                return;
+        }
+
+        if (repo.themMoi(cb)) {
+            System.out.println("Thêm mới vào Cơ sở dữ liệu thành công!");
+        } else {
+            System.out.println("Thêm mới thất bại!");
         }
     }
 
@@ -74,32 +69,52 @@ public class QLCB implements IQLCB {
         System.out.println("==== TÌM KIẾM CÁN BỘ ====");
         System.out.print("Nhập họ tên cần tìm: ");
         String ten = sc.nextLine();
-        System.out.println("+-------------------------+-----+----------+--------------------+");
-        System.out.printf("|%25s|%5s|%10s|%20s|\n", "Họ tên", "Tuổi", "Giới tính", "Địa chỉ");
-        System.out.println("+-------------------------+-----+----------+--------------------+");
-        boolean timThay = false;
-        for (CanBo cb : canBoList) {
-            if (cb.getHoTen().contains(ten)) {
-                System.out.printf("|%25s|%5s|%10s|%20s|\n", cb.getHoTen(), cb.getTuoi(), cb.getGioiTinh(), cb.getDiaChi());
-                timThay = true;
-            }
-        }
-        if (!timThay) {
+
+        List<CanBo> ketQua = repo.timKiemTheoTen(ten);
+
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
+        System.out.printf("|%25s|%5s|%10s|%20s|%15s|%25s|\n", "Họ tên", "Tuổi", "Giới tính", "Địa chỉ", "Loại", "Thông tin riêng");
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
+
+        if (ketQua.isEmpty()) {
             System.out.println("Không tìm thấy kết quả nào.");
+        } else {
+            inDanhSach(ketQua);
         }
-        System.out.println("+-------------------------+-----+----------+--------------------+");
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
     }
 
     @Override
     public void hienThiToanBo() {
         System.out.println("==== HIỂN THỊ TOÀN BỘ CÁN BỘ ====");
-        System.out.println("+-------------------------+-----+----------+--------------------+");
-        System.out.printf("|%25s|%5s|%10s|%20s|\n", "Họ tên", "Tuổi", "Giới tính", "Địa chỉ");
-        System.out.println("+-------------------------+-----+----------+--------------------+");
-        for (CanBo cb : canBoList) {
-            System.out.printf("|%25s|%5s|%10s|%20s|\n", cb.getHoTen(), cb.getTuoi(), cb.getGioiTinh(), cb.getDiaChi());
+        List<CanBo> danhSach = repo.layTatCa();
+
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
+        System.out.printf("|%25s|%5s|%10s|%20s|%15s|%25s|\n", "Họ tên", "Tuổi", "Giới tính", "Địa chỉ", "Loại", "Thông tin riêng");
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
+
+        if (!danhSach.isEmpty()) {
+            inDanhSach(danhSach);
+        } else {
+            System.out.println("Không có dữ liệu trong Database");
         }
-        System.out.println("+-------------------------+-----+----------+--------------------+");
+        System.out.println("+-------------------------+-----+----------+--------------------+---------------+-------------------------+");
+    }
+
+    // Hàm phụ trợ in danh sách để rút gọn code
+    private void inDanhSach(List<CanBo> canBoList) {
+        for (CanBo cb : canBoList) {
+            String thongTinRieng = "";
+            if (cb.getLoai().equals(Loai.CN)) {
+                thongTinRieng = "Bậc: " + ((CongNhan) cb).getBac();
+            } else if (cb.getLoai().equals(Loai.KS)) {
+                thongTinRieng = "Ngành: " + ((KySu) cb).getNganhDaoTao();
+            } else if (cb.getLoai().equals(Loai.NV)) {
+                thongTinRieng = "Công việc: " + ((NhanVien) cb).getCongViec();
+            }
+            System.out.printf("|%25s|%5s|%10s|%20s|%15s|%25s|\n",
+                    cb.getHoTen(), cb.getTuoi(), cb.getGioiTinh(), cb.getDiaChi(), cb.getLoai(), thongTinRieng);
+        }
     }
 
     @Override
@@ -108,13 +123,10 @@ public class QLCB implements IQLCB {
         System.out.print("Nhập họ tên cán bộ cần xóa (xóa chính xác): ");
         String ten = sc.nextLine();
 
-        // Dùng removeIf để xóa an toàn trong List, tránh lỗi ConcurrentModificationException
-        boolean xoaThanhCong = canBoList.removeIf(cb -> cb.getHoTen().equals(ten));
-
-        if (xoaThanhCong) {
-            System.out.println("Đã xóa thành công cán bộ tên: " + ten);
+        if (repo.xoaTheoTen(ten)) {
+            System.out.println("Đã xóa thành công cán bộ tên: " + ten + " khỏi Database.");
         } else {
-            System.out.println("Không tìm thấy cán bộ nào có tên chính xác là: " + ten);
+            System.out.println("Không tìm thấy cán bộ nào có tên chính xác là: " + ten + " hoặc xóa thất bại.");
         }
     }
 }

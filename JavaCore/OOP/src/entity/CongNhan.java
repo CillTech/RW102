@@ -6,8 +6,8 @@ public class CongNhan extends CanBo {
     public CongNhan() {
     }
 
-    public CongNhan(String hoTen, int tuoi, GioiTinh gioiTinh, String diaChi, int bac) {
-        super(hoTen, tuoi, gioiTinh, diaChi);
+    public CongNhan(String hoTen, int tuoi, GioiTinh gioiTinh, String diaChi, Loai loai, int bac) {
+        super(hoTen, tuoi, gioiTinh, diaChi, loai);
         this.bac = bac;
     }
 

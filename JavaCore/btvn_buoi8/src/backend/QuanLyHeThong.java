@@ -20,8 +20,8 @@ public class QuanLyHeThong implements IQLHT {
         String sql = "SELECT a.account_id, a.email, a.username, a.full_name, " +
                 "d.department_id, d.department_name, p.position_id, p.position_name " +
                 "FROM account_table a " +
-                "JOIN department d ON a.department_id = d.department_id " +
-                "JOIN position_table p ON a.position_id = p.position_id";
+                "LEFT JOIN department d ON a.department_id = d.department_id " +
+                "LEFT JOIN position_table p ON a.position_id = p.position_id";
 
         List<Account> accounts = getAccountsFromDB(sql, null);
         printAccountTable(accounts);

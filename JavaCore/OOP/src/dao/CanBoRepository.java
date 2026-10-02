@@ -67,6 +67,21 @@ public class CanBoRepository {
         return layDuLieu("SELECT * FROM can_bo WHERE ho_ten LIKE ?", ten);
     }
 
+    public boolean updateDiaChiTheoTen(String ten, String diaChiMoi) {
+        String sql = "UPDATE can_bo SET dia_chi = ? WHERE ho_ten = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, diaChiMoi);
+            pstmt.setString(2, ten);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // Hàm dùng chung để lấy dữ liệu
     private List<CanBo> layDuLieu(String sql, String tuKhoa) {
         List<CanBo> list = new ArrayList<>();

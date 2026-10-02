@@ -129,4 +129,20 @@ public class QLCB implements IQLCB {
             System.out.println("Không tìm thấy cán bộ nào có tên là: " + ten + " hoặc xóa thất bại.");
         }
     }
+
+    @Override
+    public void updateDiaChiTheoTen() {
+        System.out.println("==== CẬP NHẬT ĐỊA CHỈ ====");
+        System.out.print("Nhập họ tên cán bộ cần cập nhật: ");
+        String ten = sc.nextLine();
+
+        System.out.print("Nhập địa chỉ mới: ");
+        String diaChiMoi = sc.nextLine();
+
+        if (repo.updateDiaChiTheoTen(ten, diaChiMoi)) {
+            System.out.println("Đã cập nhật địa chỉ thành công cho cán bộ: " + ten);
+        } else {
+            System.out.println("Cập nhật thất bại. Không tìm thấy cán bộ nào có tên là: " + ten);
+        }
+    }
 }

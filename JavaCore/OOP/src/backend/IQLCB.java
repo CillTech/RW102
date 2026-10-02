@@ -5,4 +5,5 @@ public interface IQLCB {
     void timKiemTheoTen();
     void hienThiToanBo();
     void xoaTheoTen();
+    void updateDiaChiTheoTen();
 }

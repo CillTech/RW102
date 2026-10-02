@@ -25,7 +25,7 @@ public class CanBoRepository {
             pstmt.setNull(7, Types.VARCHAR);
             pstmt.setNull(8, Types.VARCHAR);
 
-            // Kiểm tra kiểu đối tượng thực tế (Đa hình) để set giá trị phù hợp
+            // Kiểm tra kiểu đối tượng thực tế
             if (cb instanceof CongNhan) {
                 CongNhan cn = (CongNhan) cb;
                 pstmt.setString(5, "CN");
@@ -48,10 +48,10 @@ public class CanBoRepository {
     }
 
     public boolean xoaTheoTen(String ten) {
-        String sql = "DELETE FROM can_bo WHERE ho_ten = ?";
+        String sql = "DELETE FROM can_bo WHERE ho_ten LIKE ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, ten);
+            pstmt.setString(1,ten);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

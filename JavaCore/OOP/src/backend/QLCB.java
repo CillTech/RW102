@@ -120,7 +120,7 @@ public class QLCB implements IQLCB {
     @Override
     public void xoaTheoTen() {
         System.out.println("==== XÓA CÁN BỘ ====");
-        System.out.print("Nhập họ tên cán bộ cần xóa (xóa chính xác): ");
+        System.out.print("Nhập họ tên cán bộ cần xóa: ");
         String ten = sc.nextLine();
 
         if (repo.xoaTheoTen(ten)) {

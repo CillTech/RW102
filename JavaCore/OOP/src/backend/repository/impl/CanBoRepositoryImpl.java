@@ -1,5 +1,6 @@
-package dao;
+package backend.repository.impl;
 
+import backend.repository.ICanBoRepository;
 import entity.*;
 import utils.DatabaseConnection;
 
@@ -7,11 +8,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CanBoRepository {
+public class CanBoRepositoryImpl implements ICanBoRepository {
 
+    @Override
     public boolean themMoi(CanBo cb) {
         String sql = "INSERT INTO can_bo (ho_ten, tuoi, gioi_tinh, dia_chi, loai, bac, nganh, cong_viec) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
@@ -20,12 +21,10 @@ public class CanBoRepository {
             pstmt.setString(3, cb.getGioiTinh().name());
             pstmt.setString(4, cb.getDiaChi());
 
-            // Set NULL mặc định cho các trường riêng
             pstmt.setNull(6, Types.INTEGER);
             pstmt.setNull(7, Types.VARCHAR);
             pstmt.setNull(8, Types.VARCHAR);
 
-            // Kiểm tra kiểu đối tượng thực tế
             if (cb instanceof CongNhan) {
                 CongNhan cn = (CongNhan) cb;
                 pstmt.setString(5, "CN");
@@ -47,11 +46,12 @@ public class CanBoRepository {
         }
     }
 
+    @Override
     public boolean xoaTheoTen(String ten) {
         String sql = "DELETE FROM can_bo WHERE ho_ten LIKE ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1,ten);
+            pstmt.setString(1, ten);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,14 +59,17 @@ public class CanBoRepository {
         }
     }
 
+    @Override
     public List<CanBo> layTatCa() {
         return layDuLieu("SELECT * FROM can_bo", null);
     }
 
+    @Override
     public List<CanBo> timKiemTheoTen(String ten) {
         return layDuLieu("SELECT * FROM can_bo WHERE ho_ten LIKE ?", ten);
     }
 
+    @Override
     public boolean updateDiaChiTheoTen(String ten, String diaChiMoi) {
         String sql = "UPDATE can_bo SET dia_chi = ? WHERE ho_ten = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -82,7 +85,6 @@ public class CanBoRepository {
         }
     }
 
-    // Hàm dùng chung để lấy dữ liệu
     private List<CanBo> layDuLieu(String sql, String tuKhoa) {
         List<CanBo> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();

@@ -1,5 +1,6 @@
-package dao;
+package backend.repository.impl;
 
+import backend.repository.IAccountRepository;
 import entity.Account;
 import entity.Department;
 import entity.Position;
@@ -12,8 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountRepository {
-
+public class AccountRepositoryImpl implements IAccountRepository {
+    @Override
     public List<Account> layTatCa() {
         String sql = "SELECT a.account_id, a.email, a.username, a.full_name, " +
                 "d.department_id, d.department_name, p.position_id, p.position_name " +
@@ -23,6 +24,7 @@ public class AccountRepository {
         return thucThiTruyVan(sql, null);
     }
 
+    @Override
     public List<Account> timKiemTheoUsername(String username) {
         String sql = "SELECT a.account_id, a.email, a.username, a.full_name, " +
                 "d.department_id, d.department_name, p.position_id, p.position_name " +
@@ -33,6 +35,7 @@ public class AccountRepository {
         return thucThiTruyVan(sql, "%" + username + "%");
     }
 
+    @Override
     public boolean themMoi(String email, String username, String fullName, int depId, int posId) {
         String sql = "INSERT INTO account_table (email, username, full_name, department_id, position_id) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -44,16 +47,17 @@ public class AccountRepository {
             pstmt.setInt(5, posId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Lỗi SQL: " + e.getMessage());
             return false;
         }
     }
 
+    @Override
     public boolean xoaTheoUsername(String username) {
         String sql = "DELETE FROM account_table WHERE username = ?";
         return thucThiCapNhat(sql, username);
     }
 
+    @Override
     public boolean capNhatFullName(String username, String newFullName) {
         String sql = "UPDATE account_table SET full_name = ? WHERE username = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -66,7 +70,6 @@ public class AccountRepository {
         }
     }
 
-    // Hàm phụ trợ dùng chung cho SELECT
     private List<Account> thucThiTruyVan(String sql, String param) {
         List<Account> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
@@ -86,7 +89,6 @@ public class AccountRepository {
         return list;
     }
 
-    // Hàm phụ trợ dùng chung cho DELETE
     private boolean thucThiCapNhat(String sql, String param) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {

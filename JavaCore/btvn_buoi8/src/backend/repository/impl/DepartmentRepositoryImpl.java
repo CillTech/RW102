@@ -1,5 +1,6 @@
-package dao;
+package backend.repository.impl;
 
+import backend.repository.IDepartmentRepository;
 import entity.Department;
 import utils.DatabaseConnection;
 
@@ -10,16 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepartmentRepository {
-
+public class DepartmentRepositoryImpl implements IDepartmentRepository {
+    @Override
     public List<Department> layTatCa() {
         return layDuLieu("SELECT department_id, department_name FROM department", null);
     }
 
+    @Override
     public List<Department> timKiemTheoTen(String name) {
         return layDuLieu("SELECT department_id, department_name FROM department WHERE department_name LIKE ?", "%" + name + "%");
     }
 
+    @Override
     public boolean themMoi(String name) {
         String sql = "INSERT INTO department (department_name) VALUES (?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -31,6 +34,7 @@ public class DepartmentRepository {
         }
     }
 
+    @Override
     public boolean xoaTheoId(int id) {
         String sql = "DELETE FROM department WHERE department_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -38,11 +42,11 @@ public class DepartmentRepository {
             pstmt.setInt(1, id);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("Không thể xóa phòng ban này vì đang có nhân viên phụ thuộc!");
             return false;
         }
     }
 
+    @Override
     public boolean capNhatTenPhongBan(int id, String newName) {
         String sql = "UPDATE department SET department_name = ? WHERE department_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();

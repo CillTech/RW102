@@ -7,7 +7,6 @@ import entity.Department;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class Function {
     private AccountController accController = new AccountController();
@@ -196,11 +195,9 @@ public class Function {
     // ================= HÀM HỖ TRỢ VALIDATION =================
 
     private String nhapEmailHopLe() {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        Pattern p = Pattern.compile(emailRegex);
         while (true) {
             String input = nhapChuoiDoDai("Nhập Email (5-50 kí tự): ", 5, 50);
-            if (!p.matcher(input).matches()) {
+            if (!input.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9+_.-]+\\.[A-Za-z0-9.]+$")) {
                 System.out.println("Lỗi: Email không đúng định dạng (VD: example@gmail.com)!");
                 continue;
             }

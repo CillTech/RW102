@@ -8,6 +8,7 @@ public interface IDepartmentRepository {
     List<Department> timKiemTheoTen(String name);
     boolean themMoi(String name);
     boolean xoaTheoId(int id);
-    boolean capNhatTenPhongBan(int id, String newName);
+    boolean capNhatTen(int id, String newName);
     boolean isDepartmentIdTonTai(int id);
+    boolean isDepartmentNameTonTai(String name);
 }

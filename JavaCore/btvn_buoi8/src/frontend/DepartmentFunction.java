@@ -1,12 +1,10 @@
 package frontend;
 
-import backend.controller.DepartmentController;
 import entity.Department;
 
 import java.util.List;
 
 public class DepartmentFunction extends Function {
-    private DepartmentController depController = new DepartmentController();
 
     public void menuDepartment() {
         while (true) {
@@ -45,9 +43,18 @@ public class DepartmentFunction extends Function {
     }
 
     private void themMoiDepartment() {
-        String name = nhapChuoiKhongRong("Nhập tên phòng ban mới: ");
+        String name;
+        while (true) {
+            name = nhapChuoiKhongRong("Nhập tên phòng ban mới: ");
+            if (depController.isDepartmentNameTonTai(name)) {
+                System.out.println("Lỗi: Tên phòng ban đã tồn tại trong DB, vui lòng nhập lại!");
+            } else {
+                break;
+            }
+        }
+
         if (depController.themMoi(name)) System.out.println("Thêm thành công!");
-        else System.out.println("Thêm thất bại (Có thể trùng tên)!");
+        else System.out.println("Thêm thất bại!");
     }
 
     private void xoaDepartment() {
@@ -67,29 +74,5 @@ public class DepartmentFunction extends Function {
 
         if (depController.capNhatTenPhongBan(id, newName)) System.out.println("Cập nhật thành công!");
         else System.out.println("Cập nhật thất bại!");
-    }
-
-    public int nhapIdDepartmentTonTai(String prompt) {
-        while (true) {
-            int id = nhapSoNguyenDuong(prompt);
-            if (depController.isDepartmentIdTonTai(id)) {
-                return id;
-            }
-            System.out.println("Lỗi: ID Phòng ban không tồn tại trong hệ thống. Vui lòng nhập lại!");
-        }
-    }
-
-    public void inBangDepartment(List<Department> list) {
-        if (list == null || list.isEmpty()) {
-            System.out.println("Danh sách trống!");
-            return;
-        }
-        System.out.println("+----+-------------------------+");
-        System.out.printf("| %-2s | %-23s |\n", "ID", "Department Name");
-        System.out.println("+----+-------------------------+");
-        for (Department d : list) {
-            System.out.printf("| %-2d | %-23s |\n", d.getId(), d.getName());
-        }
-        System.out.println("+----+-------------------------+");
     }
 }

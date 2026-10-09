@@ -13,6 +13,8 @@ public class DepartmentController {
     public List<Department> timKiemTheoTen(String name) { return service.timKiemTheoTen(name); }
     public boolean themMoi(String name) { return service.themMoi(name); }
     public boolean xoaTheoId(int id) { return service.xoaTheoId(id); }
-    public boolean capNhatTenPhongBan(int id, String newName) { return service.capNhatTenPhongBan(id, newName); }
-    public boolean isDepartmentIdTonTai(int id) { return service.isDepartmentIdTonTai(id); };
+    public boolean capNhatTenPhongBan(int id, String newName) { return service.capNhatTen(id, newName); }
+
+    public boolean isDepartmentIdTonTai(int id) { return service.isDepartmentIdTonTai(id); }
+    public boolean isDepartmentNameTonTai(String name) { return service.isDepartmentNameTonTai(name); }
 }

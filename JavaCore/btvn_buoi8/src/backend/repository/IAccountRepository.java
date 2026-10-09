@@ -6,12 +6,17 @@ import java.util.List;
 public interface IAccountRepository {
     List<Account> layTatCa();
     List<Account> timKiemTheoUsername(String username);
-    boolean themMoi(String email, String username, String fullName, int depId, int posId);
-    boolean xoaTheoUsername(String username);
-    boolean capNhatFullName(String username, String newFullName);
+    boolean themMoi(Account account);
     boolean xoaTheoId(int id);
     boolean capNhatUsername(int id, String newUsername);
+
     boolean isEmailTonTai(String email);
+
+    // Dành cho Thêm mới (INSERT)
     boolean isUsernameTonTai(String username);
+
+    // Dành cho Cập nhật (UPDATE) - Overloading
+    boolean isUsernameTonTai(String username, int excludeId);
+
     boolean isAccountIdTonTai(int id);
 }

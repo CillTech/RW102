@@ -2,13 +2,14 @@ package frontend;
 
 import backend.controller.AccountController;
 import entity.Account;
+import entity.Department;
+import entity.Position;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 public class AccountFunction extends Function {
     private AccountController accController = new AccountController();
-    private DepartmentFunction depFunction = new DepartmentFunction();
 
     public void menuAccount() {
         while (true) {
@@ -53,19 +54,21 @@ public class AccountFunction extends Function {
         String fullName = nhapChuoiDoDai("Nhập Full Name (5-50 kí tự): ", 5, 50);
 
         System.out.println("\n--- Danh sách Phòng ban hiện có ---");
-        depFunction.hienThiDepartment();
-        int depId = depFunction.nhapIdDepartmentTonTai("Mời bạn nhập ID Phòng ban: ");
+        inBangDepartment(depController.layTatCa());
+        int depId = nhapIdDepartmentTonTai("Mời bạn nhập ID Phòng ban: ");
 
-        System.out.println("\n--- Danh sách Vị trí ---");
-        System.out.println("1. Dev | 2. Test | 3. Scrum Master | 4. PM");
-        int posId;
-        while (true) {
-            posId = nhapSoNguyenDuong("Mời bạn nhập ID Vị trí (1-4): ");
-            if (posId >= 1 && posId <= 4) break;
-            System.out.println("Lỗi: Vị trí không hợp lệ, vui lòng chọn từ 1 đến 4!");
-        }
+        System.out.println("\n--- Danh sách Vị trí hiện có ---");
+        inBangPosition(posController.layTatCa());
+        int posId = nhapIdPositionTonTai("Mời bạn nhập ID Vị trí: ");
 
-        if (accController.themMoi(email, username, fullName, depId, posId)) {
+        Account newAcc = new Account();
+        newAcc.setEmail(email);
+        newAcc.setUsername(username);
+        newAcc.setFullName(fullName);
+        newAcc.setDepartment(new Department(depId, null));
+        newAcc.setPosition(new Position(posId, null));
+
+        if (accController.themMoi(newAcc)) {
             System.out.println("Thêm Account thành công!");
         } else {
             System.out.println("Lỗi cơ sở dữ liệu: Thêm thất bại!");
@@ -89,7 +92,7 @@ public class AccountFunction extends Function {
         inBangAccount(accController.layTatCa());
 
         int id = nhapIdAccountTonTai("\nNhập ID account cần cập nhật: ");
-        String newUsername = nhapUsernameHopLe();
+        String newUsername = nhapUsernameHopLe(id);
 
         if (accController.capNhatUsername(id, newUsername)) {
             System.out.println("Cập nhật Username thành công!");
@@ -97,8 +100,6 @@ public class AccountFunction extends Function {
             System.out.println("Lỗi cơ sở dữ liệu: Cập nhật thất bại!");
         }
     }
-
-    // ================= VALIDATION RIÊNG CHO ACCOUNT =================
 
     private String nhapEmailHopLe() {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
@@ -117,11 +118,23 @@ public class AccountFunction extends Function {
         }
     }
 
+    // 1. Hàm nhập Username cho Thêm mới (INSERT)
     private String nhapUsernameHopLe() {
+        return nhapUsernameHopLe(-1);
+    }
+
+    // 2. Hàm nhập Username cho Cập nhật (UPDATE) - Overloading
+        private String nhapUsernameHopLe(int currentId) {
         while (true) {
             String input = nhapChuoiDoDai("Nhập Username (5-50 kí tự): ", 5, 50);
-            if (accController.isUsernameTonTai(input)) {
-                System.out.println("Lỗi: Username này đã tồn tại trong DB, vui lòng nhập lại!");
+
+            // Gọi hàm controller tương ứng theo số lượng tham số
+            boolean isDuplicate = (currentId <= 0)
+                    ? accController.isUsernameTonTai(input)
+                    : accController.isUsernameTonTai(input, currentId);
+
+            if (isDuplicate) {
+                System.out.println("Lỗi: Username này đã tồn tại, vui lòng nhập lại!");
             } else {
                 return input;
             }
@@ -136,27 +149,5 @@ public class AccountFunction extends Function {
             }
             System.out.println("Lỗi: ID Account này không tồn tại trong hệ thống. Vui lòng nhập lại!");
         }
-    }
-
-    private void inBangAccount(List<Account> list) {
-        if (list == null || list.isEmpty()) {
-            System.out.println("Danh sách trống!");
-            return;
-        }
-        System.out.println("+----+---------------------------+-----------------+--------------------+-------------------------+--------------------+");
-        System.out.printf("| %-2s | %-25s | %-15s | %-18s | %-23s | %-18s |\n", "ID", "Email", "Username", "Full Name", "Department", "Position");
-        System.out.println("+----+---------------------------+-----------------+--------------------+-------------------------+--------------------+");
-        for (Account a : list) {
-            String depName = (a.getDepartment() != null && a.getDepartment().getName() != null)
-                    ? a.getDepartment().getName()
-                    : "Chưa có";
-
-            String posName = (a.getPosition() != null && a.getPosition().getName() != null)
-                    ? a.getPosition().getName()
-                    : "Chưa có";
-            System.out.printf("| %-2d | %-25s | %-15s | %-18s | %-23s | %-18s |\n",
-                    a.getId(), a.getEmail(), a.getUsername(), a.getFullName(), depName, posName);
-        }
-        System.out.println("+----+---------------------------+-----------------+--------------------+-------------------------+--------------------+");
     }
 }

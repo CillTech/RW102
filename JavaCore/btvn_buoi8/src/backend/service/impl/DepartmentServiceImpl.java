@@ -23,8 +23,11 @@ public class DepartmentServiceImpl implements IDepartmentService {
     public boolean xoaTheoId(int id) { return repository.xoaTheoId(id); }
 
     @Override
-    public boolean capNhatTenPhongBan(int id, String newName) { return repository.capNhatTenPhongBan(id, newName); }
+    public boolean capNhatTen(int id, String newName) { return repository.capNhatTen(id, newName); }
 
     @Override
-    public boolean isDepartmentIdTonTai(int id) {return repository.isDepartmentIdTonTai(id);};
+    public boolean isDepartmentIdTonTai(int id) { return repository.isDepartmentIdTonTai(id); }
+
+    @Override
+    public boolean isDepartmentNameTonTai(String name) { return repository.isDepartmentNameTonTai(name); }
 }

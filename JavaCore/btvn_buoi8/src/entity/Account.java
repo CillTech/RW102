@@ -17,6 +17,9 @@ public class Account {
         this.position = position;
     }
 
+    public Account() {
+    }
+
     public int getId() { return id; }
     public String getEmail() { return email; }
     public String getUsername() { return username; }

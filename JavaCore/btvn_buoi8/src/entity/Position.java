@@ -9,6 +9,9 @@ public class Position {
         this.name = name;
     }
 
+    public Position() {
+    }
+
     public int getId() { return id; }
     public String getName() { return name; }
 

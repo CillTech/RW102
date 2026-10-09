@@ -1,7 +1,7 @@
 package backend.repository.impl;
 
-import backend.repository.IDepartmentRepository;
-import entity.Department;
+import backend.repository.IPositionRepository;
+import entity.Position;
 import utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -11,21 +11,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DepartmentRepositoryImpl implements IDepartmentRepository {
+public class PositionRepositoryImpl implements IPositionRepository {
 
     @Override
-    public List<Department> layTatCa() {
-        return layDuLieu("SELECT department_id, department_name FROM department", null);
+    public List<Position> layTatCa() {
+        return layDuLieu("SELECT position_id, position_name FROM position_table", null);
     }
 
     @Override
-    public List<Department> timKiemTheoTen(String name) {
-        return layDuLieu("SELECT department_id, department_name FROM department WHERE department_name LIKE ?", "%" + name + "%");
+    public List<Position> timKiemTheoTen(String name) {
+        return layDuLieu("SELECT position_id, position_name FROM position_table WHERE position_name LIKE ?", "%" + name + "%");
     }
 
     @Override
     public boolean themMoi(String name) {
-        String sql = "INSERT INTO department (department_name) VALUES (?)";
+        String sql = "INSERT INTO position_table (position_name) VALUES (?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
@@ -37,7 +37,7 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
 
     @Override
     public boolean xoaTheoId(int id) {
-        String sql = "DELETE FROM department WHERE department_id = ?";
+        String sql = "DELETE FROM position_table WHERE position_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -49,7 +49,7 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
 
     @Override
     public boolean capNhatTen(int id, String newName) {
-        String sql = "UPDATE department SET department_name = ? WHERE department_id = ?";
+        String sql = "UPDATE position_table SET position_name = ? WHERE position_id = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, newName);
@@ -61,8 +61,8 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
     }
 
     @Override
-    public boolean isDepartmentIdTonTai(int id) {
-        String sql = "SELECT 1 FROM department WHERE department_id = ? LIMIT 1";
+    public boolean isPositionIdTonTai(int id) {
+        String sql = "SELECT 1 FROM position_table WHERE position_id = ? LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -75,8 +75,8 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
     }
 
     @Override
-    public boolean isDepartmentNameTonTai(String name) {
-        String sql = "SELECT 1 FROM department WHERE department_name = ? LIMIT 1";
+    public boolean isPositionNameTonTai(String name) {
+        String sql = "SELECT 1 FROM position_table WHERE position_name = ? LIMIT 1";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, name);
@@ -88,14 +88,14 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
         }
     }
 
-    private List<Department> layDuLieu(String sql, String param) {
-        List<Department> list = new ArrayList<>();
+    private List<Position> layDuLieu(String sql, String param) {
+        List<Position> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             if (param != null) pstmt.setString(1, param);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    list.add(new Department(rs.getInt("department_id"), rs.getString("department_name")));
+                    list.add(new Position(rs.getInt("position_id"), rs.getString("position_name")));
                 }
             }
         } catch (SQLException e) {

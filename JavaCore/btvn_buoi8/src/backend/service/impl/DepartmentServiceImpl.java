@@ -24,4 +24,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
     @Override
     public boolean capNhatTenPhongBan(int id, String newName) { return repository.capNhatTenPhongBan(id, newName); }
+
+    @Override
+    public boolean isDepartmentIdTonTai(int id) {return repository.isDepartmentIdTonTai(id);};
 }

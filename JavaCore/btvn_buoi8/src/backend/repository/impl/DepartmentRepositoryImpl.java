@@ -74,4 +74,16 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
         }
         return list;
     }
+
+    @Override
+    public boolean isDepartmentIdTonTai(int id) {
+        String sql = "SELECT 1 FROM department WHERE department_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) { return false; }
+    }
 }

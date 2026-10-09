@@ -16,4 +16,11 @@ public class AccountController {
     }
     public boolean xoaTheoUsername(String username) { return service.xoaTheoUsername(username); }
     public boolean capNhatFullName(String username, String newFullName) { return service.capNhatFullName(username, newFullName); }
+
+    public boolean xoaTheoId(int id) { return service.xoaTheoId(id);}
+    public boolean capNhatUsername(int id, String newUsername) { return service.capNhatUsername(id, newUsername); }
+
+    public boolean isEmailTonTai(String email) {return service.isEmailTonTai(email);}
+    public boolean isUsernameTonTai(String username) {return service.isUsernameTonTai(username);}
+    public boolean isAccountIdTonTai(int id) {return service.isAccountIdTonTai(id);}
 }

@@ -70,6 +70,67 @@ public class AccountRepositoryImpl implements IAccountRepository {
         }
     }
 
+    @Override
+    public boolean xoaTheoId(int id) {
+        String sql = "DELETE FROM account_table WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean capNhatUsername(int id, String newUsername) {
+        String sql = "UPDATE account_table SET username = ? WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newUsername);
+            pstmt.setInt(2, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isEmailTonTai(String email) {
+        String sql = "SELECT 1 FROM account_table WHERE email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next(); // Trả về true nếu có kết quả
+            }
+        } catch (SQLException e) { return false; }
+    }
+
+    @Override
+    public boolean isUsernameTonTai(String username) {
+        String sql = "SELECT 1 FROM account_table WHERE username = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) { return false; }
+    }
+
+    @Override
+    public boolean isAccountIdTonTai(int id) {
+        String sql = "SELECT 1 FROM account_table WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) { return false; }
+    }
+
     private List<Account> thucThiTruyVan(String sql, String param) {
         List<Account> list = new ArrayList<>();
         try (Connection conn = DatabaseConnection.getConnection();

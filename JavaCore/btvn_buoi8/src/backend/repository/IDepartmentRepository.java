@@ -9,4 +9,5 @@ public interface IDepartmentRepository {
     boolean themMoi(String name);
     boolean xoaTheoId(int id);
     boolean capNhatTenPhongBan(int id, String newName);
+    boolean isDepartmentIdTonTai(int id);
 }

@@ -14,10 +14,16 @@ public class PositionServiceImpl implements IPositionService {
     public List<Position> layTatCa() { return repository.layTatCa(); }
 
     @Override
+    public Position layTheoId(int id) { return repository.layTheoId(id); }
+
+    @Override
     public List<Position> timKiemTheoTen(String name) { return repository.timKiemTheoTen(name); }
 
     @Override
     public boolean themMoi(String name) { return repository.themMoi(name); }
+
+    @Override
+    public int themDanhSach(List<String> names) { return repository.themDanhSach(names); }
 
     @Override
     public boolean xoaTheoId(int id) { return repository.xoaTheoId(id); }

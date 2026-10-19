@@ -10,8 +10,10 @@ public class DepartmentController {
     private IDepartmentService service = new DepartmentServiceImpl();
 
     public List<Department> layTatCa() { return service.layTatCa(); }
+    public Department layTheoId(int id) { return service.layTheoId(id); }
     public List<Department> timKiemTheoTen(String name) { return service.timKiemTheoTen(name); }
     public boolean themMoi(String name) { return service.themMoi(name); }
+    public int themDanhSach(List<String> names) { return service.themDanhSach(names); }
     public boolean xoaTheoId(int id) { return service.xoaTheoId(id); }
     public boolean capNhatTenPhongBan(int id, String newName) { return service.capNhatTen(id, newName); }
 

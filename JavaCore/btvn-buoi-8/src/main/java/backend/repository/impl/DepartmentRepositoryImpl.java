@@ -19,6 +19,23 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
     }
 
     @Override
+    public Department layTheoId(int id) {
+        String sql = "SELECT department_id, department_name FROM department WHERE department_id = ? LIMIT 1";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Department(rs.getInt("department_id"), rs.getString("department_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
     public List<Department> timKiemTheoTen(String name) {
         return layDuLieu("SELECT department_id, department_name FROM department WHERE department_name LIKE ?", "%" + name + "%");
     }
@@ -33,6 +50,40 @@ public class DepartmentRepositoryImpl implements IDepartmentRepository {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    @Override
+    public int themDanhSach(List<String> names) {
+        if (names == null || names.isEmpty()) return 0;
+
+        String sql = "INSERT INTO department (department_name) VALUES (?)";
+        int count = 0;
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                for (String name : names) {
+                    pstmt.setString(1, name);
+                    pstmt.addBatch();
+                }
+
+                int[] results = pstmt.executeBatch();
+                conn.commit();
+
+                for (int res : results) {
+                    if (res >= 0 || res == PreparedStatement.SUCCESS_NO_INFO) {
+                        count++;
+                    }
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
     }
 
     @Override

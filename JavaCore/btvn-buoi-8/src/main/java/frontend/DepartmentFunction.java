@@ -2,6 +2,12 @@ package frontend;
 
 import entity.Department;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentFunction extends Function {
@@ -14,8 +20,9 @@ public class DepartmentFunction extends Function {
             System.out.println("3. Thêm mới department");
             System.out.println("4. Xóa department theo ID");
             System.out.println("5. Update tên phòng ban theo ID");
-            System.out.println("6. Quay lại menu chính");
-            System.out.print("Chọn chức năng (1-6): ");
+            System.out.println("6. Import department từ file CSV");
+            System.out.println("7. Quay lại menu chính");
+            System.out.print("Chọn chức năng (1-7): ");
 
             String choice = sc.nextLine().trim();
             switch (choice) {
@@ -24,9 +31,53 @@ public class DepartmentFunction extends Function {
                 case "3": themMoiDepartment(); break;
                 case "4": xoaDepartment(); break;
                 case "5": capNhatDepartment(); break;
-                case "6": return;
+                case "6": importDepartmentFromCSV(); break;
+                case "7": return;
                 default: System.out.println("Lựa chọn không hợp lệ!");
             }
+        }
+    }
+
+    private void importDepartmentFromCSV() {
+        System.out.print("Nhập đường dẫn file CSV (mặc định 'department.csv'): ");
+        String filePath = sc.nextLine().trim();
+        if (filePath.isEmpty()) {
+            filePath = "department.csv";
+        }
+
+        List<String> validDepartments = new ArrayList<>();
+
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
+             BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8))) {
+
+            String line;
+            int lineNumber = 0;
+
+            while ((line = br.readLine()) != null) {
+                lineNumber++;
+                line = line.trim();
+                if (line.isEmpty() || (lineNumber == 1 && line.toLowerCase().startsWith("department_name"))) {
+                    continue;
+                }
+
+                String depName = line.split(",")[0].trim();
+                if (depController.isDepartmentNameTonTai(depName)) {
+                    System.out.println("[-] Dòng " + lineNumber + ": Phòng ban '" + depName + "' đã tồn tại -> Bỏ qua.");
+                    continue;
+                }
+
+                validDepartments.add(depName);
+            }
+
+            if (!validDepartments.isEmpty()) {
+                int inserted = depController.themDanhSach(validDepartments);
+                System.out.println("\n>> Đã lưu thành công " + inserted + "/" + validDepartments.size() + " department vào cơ sở dữ liệu.");
+            } else {
+                System.out.println("\n>> Không có dữ liệu hợp lệ để lưu vào DB.");
+            }
+
+        } catch (Exception e) {
+            System.out.println("Lỗi khi đọc file CSV: " + e.getMessage());
         }
     }
 

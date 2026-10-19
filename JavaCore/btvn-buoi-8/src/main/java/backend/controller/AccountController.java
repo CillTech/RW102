@@ -11,20 +11,14 @@ public class AccountController {
 
     public List<Account> layTatCa() { return service.layTatCa(); }
     public List<Account> timKiemTheoUsername(String username) { return service.timKiemTheoUsername(username); }
+    public List<Account> timKiemTheoTenSP(String fullName) { return service.timKiemTheoTenSP(fullName); }
     public boolean themMoi(Account account) { return service.themMoi(account); }
+    public int themDanhSach(List<Account> accounts) { return service.themDanhSach(accounts); }
     public boolean xoaTheoId(int id) { return service.xoaTheoId(id); }
     public boolean capNhatUsername(int id, String newUsername) { return service.capNhatUsername(id, newUsername); }
-    public List<Account> timKiemTheoTenSP(String fullName) {
-        return service.timKiemTheoTenSP(fullName);
-    }
 
     public boolean isEmailTonTai(String email) { return service.isEmailTonTai(email); }
-    public boolean isUsernameTonTai(String username) {
-        return service.isUsernameTonTai(username);
-    }
-
-    public boolean isUsernameTonTai(String username, int excludeId) {
-        return service.isUsernameTonTai(username, excludeId);
-    }
+    public boolean isUsernameTonTai(String username) { return service.isUsernameTonTai(username); }
+    public boolean isUsernameTonTai(String username, int excludeId) { return service.isUsernameTonTai(username, excludeId); }
     public boolean isAccountIdTonTai(int id) { return service.isAccountIdTonTai(id); }
 }

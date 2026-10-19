@@ -6,7 +6,12 @@ import entity.Department;
 import entity.Position;
 import utils.DatabaseConnection;
 
-import java.sql.*;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,58 +38,6 @@ public class AccountRepositoryImpl implements IAccountRepository {
                 "LEFT JOIN position_table p ON a.position_id = p.position_id " +
                 "WHERE a.username LIKE ?";
         return layDanhSach(sql, "%" + username + "%");
-    }
-
-    @Override
-    public boolean themMoi(Account account) {
-        String sql = "INSERT INTO account_table (email, username, full_name, department_id, position_id) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, account.getEmail());
-            pstmt.setString(2, account.getUsername());
-            pstmt.setString(3, account.getFullName());
-
-            if (account.getDepartment() != null) {
-                pstmt.setInt(4, account.getDepartment().getId());
-            } else {
-                pstmt.setNull(4, Types.INTEGER);
-            }
-
-            if (account.getPosition() != null) {
-                pstmt.setInt(5, account.getPosition().getId());
-            } else {
-                pstmt.setNull(5, Types.INTEGER);
-            }
-
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean xoaTheoId(int id) {
-        String sql = "DELETE FROM account_table WHERE account_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean capNhatUsername(int id, String newUsername) {
-        String sql = "UPDATE account_table SET username = ? WHERE account_id = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, newUsername);
-            pstmt.setInt(2, id);
-            return pstmt.executeUpdate() > 0;
-        } catch (SQLException e) {
-            return false;
-        }
     }
 
     @Override
@@ -116,6 +69,107 @@ public class AccountRepositoryImpl implements IAccountRepository {
             e.printStackTrace();
         }
         return list;
+    }
+
+    @Override
+    public boolean themMoi(Account account) {
+        String sql = "INSERT INTO account_table (email, username, full_name, department_id, position_id) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, account.getEmail());
+            pstmt.setString(2, account.getUsername());
+            pstmt.setString(3, account.getFullName());
+
+            if (account.getDepartment() != null) {
+                pstmt.setInt(4, account.getDepartment().getId());
+            } else {
+                pstmt.setNull(4, Types.INTEGER);
+            }
+
+            if (account.getPosition() != null) {
+                pstmt.setInt(5, account.getPosition().getId());
+            } else {
+                pstmt.setNull(5, Types.INTEGER);
+            }
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public int themDanhSach(List<Account> accounts) {
+        if (accounts == null || accounts.isEmpty()) return 0;
+
+        String sql = "INSERT INTO account_table (email, username, full_name, department_id, position_id) VALUES (?, ?, ?, ?, ?)";
+        int count = 0;
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                for (Account account : accounts) {
+                    pstmt.setString(1, account.getEmail());
+                    pstmt.setString(2, account.getUsername());
+                    pstmt.setString(3, account.getFullName());
+
+                    if (account.getDepartment() != null) {
+                        pstmt.setInt(4, account.getDepartment().getId());
+                    } else {
+                        pstmt.setNull(4, Types.INTEGER);
+                    }
+
+                    if (account.getPosition() != null) {
+                        pstmt.setInt(5, account.getPosition().getId());
+                    } else {
+                        pstmt.setNull(5, Types.INTEGER);
+                    }
+
+                    pstmt.addBatch();
+                }
+
+                int[] results = pstmt.executeBatch();
+                conn.commit();
+
+                for (int res : results) {
+                    if (res >= 0 || res == PreparedStatement.SUCCESS_NO_INFO) {
+                        count++;
+                    }
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return count;
+    }
+
+    @Override
+    public boolean xoaTheoId(int id) {
+        String sql = "DELETE FROM account_table WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean capNhatUsername(int id, String newUsername) {
+        String sql = "UPDATE account_table SET username = ? WHERE account_id = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, newUsername);
+            pstmt.setInt(2, id);
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
     @Override

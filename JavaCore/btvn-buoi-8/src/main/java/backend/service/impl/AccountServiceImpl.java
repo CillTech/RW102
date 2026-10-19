@@ -17,7 +17,13 @@ public class AccountServiceImpl implements IAccountService {
     public List<Account> timKiemTheoUsername(String username) { return repository.timKiemTheoUsername(username); }
 
     @Override
+    public List<Account> timKiemTheoTenSP(String fullName) { return repository.timKiemTheoTenSP(fullName); }
+
+    @Override
     public boolean themMoi(Account account) { return repository.themMoi(account); }
+
+    @Override
+    public int themDanhSach(List<Account> accounts) { return repository.themDanhSach(accounts); }
 
     @Override
     public boolean xoaTheoId(int id) { return repository.xoaTheoId(id); }
@@ -26,22 +32,13 @@ public class AccountServiceImpl implements IAccountService {
     public boolean capNhatUsername(int id, String newUsername) { return repository.capNhatUsername(id, newUsername); }
 
     @Override
-    public List<Account> timKiemTheoTenSP(String fullName) {
-        return repository.timKiemTheoTenSP(fullName);
-    }
-
-    @Override
     public boolean isEmailTonTai(String email) { return repository.isEmailTonTai(email); }
 
     @Override
-    public boolean isUsernameTonTai(String username) {
-        return repository.isUsernameTonTai(username);
-    }
+    public boolean isUsernameTonTai(String username) { return repository.isUsernameTonTai(username); }
 
     @Override
-    public boolean isUsernameTonTai(String username, int excludeId) {
-        return repository.isUsernameTonTai(username, excludeId);
-    }
+    public boolean isUsernameTonTai(String username, int excludeId) { return repository.isUsernameTonTai(username, excludeId); }
 
     @Override
     public boolean isAccountIdTonTai(int id) { return repository.isAccountIdTonTai(id); }

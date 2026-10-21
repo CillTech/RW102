@@ -18,7 +18,6 @@ public interface IAccountRepository {
     boolean isUsernameTonTai(String username, int excludeId);
     boolean isAccountIdTonTai(int id);
 
-    int demSoLuong();
     Set<String> layTatCaEmails();
     Set<String> layTatCaUsernames();
 }

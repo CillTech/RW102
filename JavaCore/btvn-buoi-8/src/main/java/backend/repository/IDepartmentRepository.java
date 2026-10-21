@@ -15,6 +15,5 @@ public interface IDepartmentRepository {
     boolean isDepartmentIdTonTai(int id);
     boolean isDepartmentNameTonTai(String name);
 
-    int demSoLuong();
     Set<String> layTatCaNames();
 }

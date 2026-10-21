@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class DepartmentServiceImpl implements IDepartmentService {
-    private static final int NGUONG_SO_LUONG = 500000;
     private static final String CHAR_REGEX = "^[\\p{L}0-9\\s-]+$";
     private static final Pattern CHAR_PATTERN = Pattern.compile(CHAR_REGEX);
 
@@ -55,10 +54,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
     @Override
     public int importFromCSV(String filePath) {
-        int soLuongHienTai = repository.demSoLuong();
-        boolean dungSet = soLuongHienTai <= NGUONG_SO_LUONG;
-
-        Set<String> setNames = dungSet ? repository.layTatCaNames() : new HashSet<>();
+        Set<String> setNames = repository.layTatCaNames();
         Set<String> fileNames = new HashSet<>();
         List<String> validList = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
@@ -94,11 +90,8 @@ public class DepartmentServiceImpl implements IDepartmentService {
                     }
                     if (fileNames.contains(depName.toLowerCase())) {
                         errors.add("Tên phong ban trong file bị trùng");
-                    } else {
-                        boolean daTonTai = dungSet ? setNames.contains(depName.toLowerCase()) : repository.isDepartmentNameTonTai(depName);
-                        if (daTonTai) {
-                            errors.add("Tên phòng ban đã tồn tại");
-                        }
+                    } else if (setNames.contains(depName.toLowerCase())) {
+                        errors.add("Tên phòng ban đã tồn tại");
                     }
                 }
 

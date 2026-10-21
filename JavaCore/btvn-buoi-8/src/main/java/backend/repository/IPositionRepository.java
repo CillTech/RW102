@@ -15,6 +15,5 @@ public interface IPositionRepository {
     boolean isPositionIdTonTai(int id);
     boolean isPositionNameTonTai(String name);
 
-    int demSoLuong();
     Set<String> layTatCaNames();
 }

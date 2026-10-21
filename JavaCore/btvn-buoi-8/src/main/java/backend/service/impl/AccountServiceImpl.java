@@ -22,14 +22,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class AccountServiceImpl implements IAccountService {
-    private static final int NGUONG_SO_LUONG = 500000;
     private static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
     private static final Pattern EMAIL_PATTERN = Pattern.compile(EMAIL_REGEX);
 
@@ -72,19 +68,20 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public int importFromCSV(String filePath) {
-        int soLuongHienTai = accRepo.demSoLuong();
-        boolean dungSet = soLuongHienTai <= NGUONG_SO_LUONG;
-
-        Set<String> setEmails = dungSet ? accRepo.layTatCaEmails() : new HashSet<>();
-        Set<String> setUsernames = dungSet ? accRepo.layTatCaUsernames() : new HashSet<>();
+        Set<String> setEmails = accRepo.layTatCaEmails();
+        Set<String> setUsernames = accRepo.layTatCaUsernames();
         Set<String> fileEmails = new HashSet<>();
         Set<String> fileUsernames = new HashSet<>();
 
-        Map<Integer, Department> depMap = depRepo.layTatCa().stream()
-                .collect(Collectors.toMap(Department::getId, Function.identity()));
+        Set<Integer> validDepIds = new HashSet<>();
+        for (Department d : depRepo.layTatCa()) {
+            validDepIds.add(d.getId());
+        }
 
-        Map<Integer, Position> posMap = posRepo.layTatCa().stream()
-                .collect(Collectors.toMap(Position::getId, Function.identity()));
+        Set<Integer> validPosIds = new HashSet<>();
+        for (Position p : posRepo.layTatCa()) {
+            validPosIds.add(p.getId());
+        }
 
         List<Account> validList = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
@@ -132,11 +129,8 @@ public class AccountServiceImpl implements IAccountService {
                     }
                     if (fileEmails.contains(email.toLowerCase())) {
                         errors.add("Email trong file bị trùng");
-                    } else {
-                        boolean daTonTai = dungSet ? setEmails.contains(email.toLowerCase()) : accRepo.isEmailTonTai(email);
-                        if (daTonTai) {
-                            errors.add("Email đã tồn tại");
-                        }
+                    } else if (setEmails.contains(email.toLowerCase())) {
+                        errors.add("Email đã tồn tại");
                     }
                 }
 
@@ -148,11 +142,8 @@ public class AccountServiceImpl implements IAccountService {
                     }
                     if (fileUsernames.contains(username.toLowerCase())) {
                         errors.add("Username trong file bị trùng");
-                    } else {
-                        boolean daTonTai = dungSet ? setUsernames.contains(username.toLowerCase()) : accRepo.isUsernameTonTai(username);
-                        if (daTonTai) {
-                            errors.add("Username đã tồn tại");
-                        }
+                    } else if (setUsernames.contains(username.toLowerCase())) {
+                        errors.add("Username đã tồn tại");
                     }
                 }
 
@@ -183,13 +174,17 @@ public class AccountServiceImpl implements IAccountService {
                     posId = null;
                 }
 
-                Department dep = (depId != null) ? depMap.get(depId) : null;
-                if (dep == null) {
+                Department dep = null;
+                if (depId != null && validDepIds.contains(depId)) {
+                    dep = new Department(depId, null);
+                } else {
                     System.out.println("[-] Dòng " + lineNumber + ": Phòng ban của " + fullName + " không tồn tại (sẽ set null).");
                 }
 
-                Position pos = (posId != null) ? posMap.get(posId) : null;
-                if (pos == null) {
+                Position pos = null;
+                if (posId != null && validPosIds.contains(posId)) {
+                    pos = new Position(posId, null);
+                } else {
                     System.out.println("[-] Dòng " + lineNumber + ": Vị trí của " + fullName + " không tồn tại (sẽ set null).");
                 }
 

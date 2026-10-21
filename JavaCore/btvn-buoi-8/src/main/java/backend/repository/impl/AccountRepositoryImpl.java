@@ -223,19 +223,6 @@ public class AccountRepositoryImpl implements IAccountRepository {
     }
 
     @Override
-    public int demSoLuong() {
-        String sql = "SELECT COUNT(*) FROM account_table";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    @Override
     public Set<String> layTatCaEmails() {
         Set<String> set = new HashSet<>();
         String sql = "SELECT email FROM account_table";

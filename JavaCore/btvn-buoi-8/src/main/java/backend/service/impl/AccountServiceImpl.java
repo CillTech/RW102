@@ -77,6 +77,8 @@ public class AccountServiceImpl implements IAccountService {
 
         Set<String> setEmails = dungSet ? accRepo.layTatCaEmails() : new HashSet<>();
         Set<String> setUsernames = dungSet ? accRepo.layTatCaUsernames() : new HashSet<>();
+        Set<String> fileEmails = new HashSet<>();
+        Set<String> fileUsernames = new HashSet<>();
 
         Map<Integer, Department> depMap = depRepo.layTatCa().stream()
                 .collect(Collectors.toMap(Department::getId, Function.identity()));
@@ -107,7 +109,7 @@ public class AccountServiceImpl implements IAccountService {
 
                 String[] parts = line.split(",", -1);
                 if (parts.length < 5) {
-                    errorLines.add(line);
+                    errorLines.add(line + ",Không đủ 5 cột dữ liệu");
                     continue;
                 }
 
@@ -117,36 +119,52 @@ public class AccountServiceImpl implements IAccountService {
                 String depIdStr = parts[3].trim();
                 String posIdStr = parts[4].trim();
 
-                String cleanLine = email + "," + username + "," + fullName + "," + depIdStr + "," + posIdStr;
+                List<String> errors = new ArrayList<>();
 
-                if (email.isEmpty() || username.isEmpty() || fullName.isEmpty()) {
-                    errorLines.add(cleanLine);
-                    continue;
+                if (email.isEmpty()) {
+                    errors.add("Email không được để trống");
+                } else {
+                    if (!EMAIL_PATTERN.matcher(email).matches()) {
+                        errors.add("Email không đúng định dạng");
+                    }
+                    if (email.length() < 5 || email.length() > 50) {
+                        errors.add("Email từ 5-50 kí tự");
+                    }
+                    if (fileEmails.contains(email.toLowerCase())) {
+                        errors.add("Email trong file bị trùng");
+                    } else {
+                        boolean daTonTai = dungSet ? setEmails.contains(email.toLowerCase()) : accRepo.isEmailTonTai(email);
+                        if (daTonTai) {
+                            errors.add("Email đã tồn tại");
+                        }
+                    }
                 }
 
-                if (!EMAIL_PATTERN.matcher(email).matches()) {
-                    errorLines.add(cleanLine);
-                    continue;
+                if (username.isEmpty()) {
+                    errors.add("Username không được để trống");
+                } else {
+                    if (username.length() < 5 || username.length() > 50) {
+                        errors.add("Username từ 5-50 kí tự");
+                    }
+                    if (fileUsernames.contains(username.toLowerCase())) {
+                        errors.add("Username trong file bị trùng");
+                    } else {
+                        boolean daTonTai = dungSet ? setUsernames.contains(username.toLowerCase()) : accRepo.isUsernameTonTai(username);
+                        if (daTonTai) {
+                            errors.add("Username đã tồn tại");
+                        }
+                    }
                 }
 
-                if (email.length() < 5 || email.length() > 50 ||
-                        username.length() < 5 || username.length() > 50 ||
-                        fullName.length() < 5 || fullName.length() > 50) {
-                    errorLines.add(cleanLine);
-                    continue;
+                if (fullName.isEmpty()) {
+                    errors.add("Full Name không được để trống");
+                } else if (fullName.length() < 5 || fullName.length() > 50) {
+                    errors.add("Full Name từ 5-50 kí tự");
                 }
 
-                boolean emailTonTai = dungSet ? setEmails.contains(email.toLowerCase())
-                        : (setEmails.contains(email.toLowerCase()) || accRepo.isEmailTonTai(email));
-                if (emailTonTai) {
-                    errorLines.add(cleanLine);
-                    continue;
-                }
-
-                boolean usernameTonTai = dungSet ? setUsernames.contains(username.toLowerCase())
-                        : (setUsernames.contains(username.toLowerCase()) || accRepo.isUsernameTonTai(username));
-                if (usernameTonTai) {
-                    errorLines.add(cleanLine);
+                if (!errors.isEmpty()) {
+                    String cleanBase = email + "," + username + "," + fullName + "," + depIdStr + "," + posIdStr;
+                    errorLines.add(cleanBase + "," + String.join("-", errors));
                     continue;
                 }
 
@@ -175,6 +193,8 @@ public class AccountServiceImpl implements IAccountService {
                     System.out.println("[-] Dòng " + lineNumber + ": Vị trí của " + fullName + " không tồn tại (sẽ set null).");
                 }
 
+                fileEmails.add(email.toLowerCase());
+                fileUsernames.add(username.toLowerCase());
                 setEmails.add(email.toLowerCase());
                 setUsernames.add(username.toLowerCase());
 
@@ -205,7 +225,7 @@ public class AccountServiceImpl implements IAccountService {
 
     private void xuatFileLoi(List<String> errorLines, String errorFilePath) {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(errorFilePath), StandardCharsets.UTF_8))) {
-            bw.write("email,username,full_name,department_id,position_id");
+            bw.write("email,username,full_name,department_id,position_id,error_messages");
             bw.newLine();
             for (String errLine : errorLines) {
                 bw.write(errLine);

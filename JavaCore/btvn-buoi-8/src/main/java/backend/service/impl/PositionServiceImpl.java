@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class PositionServiceImpl implements IPositionService {
     private static final int NGUONG_SO_LUONG = 500000;
-    private static final String NAME_REGEX = "^[\\p{L}0-9\\s-]{2,50}$";
-    private static final Pattern NAME_PATTERN = Pattern.compile(NAME_REGEX);
+    private static final String CHAR_REGEX = "^[\\p{L}0-9\\s-]+$";
+    private static final Pattern CHAR_PATTERN = Pattern.compile(CHAR_REGEX);
 
     private IPositionRepository repository = new PositionRepositoryImpl();
 
@@ -59,6 +59,7 @@ public class PositionServiceImpl implements IPositionService {
         boolean dungSet = soLuongHienTai <= NGUONG_SO_LUONG;
 
         Set<String> setNames = dungSet ? repository.layTatCaNames() : new HashSet<>();
+        Set<String> fileNames = new HashSet<>();
         List<String> validList = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
 
@@ -80,25 +81,33 @@ public class PositionServiceImpl implements IPositionService {
 
                 String[] parts = line.split(",", -1);
                 String posName = parts[0].trim();
+                List<String> errors = new ArrayList<>();
 
                 if (posName.isEmpty()) {
-                    errorLines.add(line);
+                    errors.add("Tên vị trí từ 2-50 kí tự");
+                } else {
+                    if (posName.length() < 2 || posName.length() > 50) {
+                        errors.add("Tên vị trí từ 2-50 kí tự");
+                    }
+                    if (!CHAR_PATTERN.matcher(posName).matches()) {
+                        errors.add("Tên vị trí chỉ được nhập số hoặc chữ");
+                    }
+                    if (fileNames.contains(posName.toLowerCase())) {
+                        errors.add("Tên vị trí trong file bị trùng");
+                    } else {
+                        boolean daTonTai = dungSet ? setNames.contains(posName.toLowerCase()) : repository.isPositionNameTonTai(posName);
+                        if (daTonTai) {
+                            errors.add("Tên vị trí đã tồn tại");
+                        }
+                    }
+                }
+
+                if (!errors.isEmpty()) {
+                    errorLines.add(posName + "," + String.join("-", errors));
                     continue;
                 }
 
-                if (!NAME_PATTERN.matcher(posName).matches()) {
-                    errorLines.add(posName);
-                    continue;
-                }
-
-                boolean daTonTai = dungSet ? setNames.contains(posName.toLowerCase())
-                        : (setNames.contains(posName.toLowerCase()) || repository.isPositionNameTonTai(posName));
-
-                if (daTonTai) {
-                    errorLines.add(posName);
-                    continue;
-                }
-
+                fileNames.add(posName.toLowerCase());
                 setNames.add(posName.toLowerCase());
                 validList.add(posName);
             }
@@ -120,7 +129,7 @@ public class PositionServiceImpl implements IPositionService {
 
     private void xuatFileLoi(List<String> errorLines, String errorFilePath) {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(errorFilePath), StandardCharsets.UTF_8))) {
-            bw.write("position_name");
+            bw.write("position_name,error_messages");
             bw.newLine();
             for (String errLine : errorLines) {
                 bw.write(errLine);

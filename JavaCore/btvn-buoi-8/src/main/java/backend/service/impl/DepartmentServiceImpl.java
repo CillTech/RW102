@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 
 public class DepartmentServiceImpl implements IDepartmentService {
     private static final int NGUONG_SO_LUONG = 500000;
-    private static final String NAME_REGEX = "^[\\p{L}0-9\\s-]{3,50}$";
-    private static final Pattern NAME_PATTERN = Pattern.compile(NAME_REGEX);
+    private static final String CHAR_REGEX = "^[\\p{L}0-9\\s-]+$";
+    private static final Pattern CHAR_PATTERN = Pattern.compile(CHAR_REGEX);
 
     private IDepartmentRepository repository = new DepartmentRepositoryImpl();
 
@@ -59,6 +59,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
         boolean dungSet = soLuongHienTai <= NGUONG_SO_LUONG;
 
         Set<String> setNames = dungSet ? repository.layTatCaNames() : new HashSet<>();
+        Set<String> fileNames = new HashSet<>();
         List<String> validList = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
 
@@ -80,25 +81,33 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
                 String[] parts = line.split(",", -1);
                 String depName = parts[0].trim();
+                List<String> errors = new ArrayList<>();
 
                 if (depName.isEmpty()) {
-                    errorLines.add(line);
+                    errors.add("Tên phòng ban từ 5-50 kí tự");
+                } else {
+                    if (depName.length() < 5 || depName.length() > 50) {
+                        errors.add("Tên phòng ban từ 5-50 kí tự");
+                    }
+                    if (!CHAR_PATTERN.matcher(depName).matches()) {
+                        errors.add("Tên phòng ban chỉ được nhập số hoặc chữ");
+                    }
+                    if (fileNames.contains(depName.toLowerCase())) {
+                        errors.add("Tên phong ban trong file bị trùng");
+                    } else {
+                        boolean daTonTai = dungSet ? setNames.contains(depName.toLowerCase()) : repository.isDepartmentNameTonTai(depName);
+                        if (daTonTai) {
+                            errors.add("Tên phòng ban đã tồn tại");
+                        }
+                    }
+                }
+
+                if (!errors.isEmpty()) {
+                    errorLines.add(depName + "," + String.join("-", errors));
                     continue;
                 }
 
-                if (!NAME_PATTERN.matcher(depName).matches()) {
-                    errorLines.add(depName);
-                    continue;
-                }
-
-                boolean daTonTai = dungSet ? setNames.contains(depName.toLowerCase())
-                        : (setNames.contains(depName.toLowerCase()) || repository.isDepartmentNameTonTai(depName));
-
-                if (daTonTai) {
-                    errorLines.add(depName);
-                    continue;
-                }
-
+                fileNames.add(depName.toLowerCase());
                 setNames.add(depName.toLowerCase());
                 validList.add(depName);
             }
@@ -120,7 +129,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
     private void xuatFileLoi(List<String> errorLines, String errorFilePath) {
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(errorFilePath), StandardCharsets.UTF_8))) {
-            bw.write("department_name");
+            bw.write("department_name,error_messages");
             bw.newLine();
             for (String errLine : errorLines) {
                 bw.write(errLine);

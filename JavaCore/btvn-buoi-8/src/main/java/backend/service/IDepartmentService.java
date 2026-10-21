@@ -13,4 +13,6 @@ public interface IDepartmentService {
     boolean capNhatTen(int id, String newName);
     boolean isDepartmentIdTonTai(int id);
     boolean isDepartmentNameTonTai(String name);
+
+    int importFromCSV(String filePath);
 }

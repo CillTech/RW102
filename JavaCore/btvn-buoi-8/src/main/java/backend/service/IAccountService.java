@@ -16,4 +16,6 @@ public interface IAccountService {
     boolean isUsernameTonTai(String username);
     boolean isUsernameTonTai(String username, int excludeId);
     boolean isAccountIdTonTai(int id);
+
+    int importFromCSV(String filePath);
 }

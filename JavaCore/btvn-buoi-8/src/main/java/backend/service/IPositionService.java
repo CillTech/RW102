@@ -13,4 +13,6 @@ public interface IPositionService {
     boolean capNhatTen(int id, String newName);
     boolean isPositionIdTonTai(int id);
     boolean isPositionNameTonTai(String name);
+
+    int importFromCSV(String filePath);
 }

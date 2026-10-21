@@ -9,7 +9,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PositionRepositoryImpl implements IPositionRepository {
 
@@ -137,6 +139,36 @@ public class PositionRepositoryImpl implements IPositionRepository {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    @Override
+    public int demSoLuong() {
+        String sql = "SELECT COUNT(*) FROM position_table";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public Set<String> layTatCaNames() {
+        Set<String> set = new HashSet<>();
+        String sql = "SELECT position_name FROM position_table";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                String val = rs.getString("position_name");
+                if (val != null) set.add(val.toLowerCase());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return set;
     }
 
     private List<Position> layDuLieu(String sql, String param) {

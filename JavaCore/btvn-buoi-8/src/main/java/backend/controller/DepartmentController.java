@@ -19,4 +19,8 @@ public class DepartmentController {
 
     public boolean isDepartmentIdTonTai(int id) { return service.isDepartmentIdTonTai(id); }
     public boolean isDepartmentNameTonTai(String name) { return service.isDepartmentNameTonTai(name); }
+
+    public int importFromCSV(String filePath) {
+        return service.importFromCSV(filePath);
+    }
 }

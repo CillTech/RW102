@@ -2,12 +2,6 @@ package frontend;
 
 import entity.Department;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DepartmentFunction extends Function {
@@ -39,45 +33,17 @@ public class DepartmentFunction extends Function {
     }
 
     private void importDepartmentFromCSV() {
-        System.out.print("Nhập đường dẫn file CSV (mặc định 'department.csv'): ");
+        System.out.print("Nhập đường dẫn file CSV: ");
         String filePath = sc.nextLine().trim();
         if (filePath.isEmpty()) {
             filePath = "department.csv";
         }
 
-        List<String> validDepartments = new ArrayList<>();
-
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
-             BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8))) {
-
-            String line;
-            int lineNumber = 0;
-
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                line = line.trim();
-                if (line.isEmpty() || (lineNumber == 1 && line.toLowerCase().startsWith("department_name"))) {
-                    continue;
-                }
-
-                String depName = line.split(",")[0].trim();
-                if (depController.isDepartmentNameTonTai(depName)) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Phòng ban '" + depName + "' đã tồn tại -> Bỏ qua.");
-                    continue;
-                }
-
-                validDepartments.add(depName);
-            }
-
-            if (!validDepartments.isEmpty()) {
-                int inserted = depController.themDanhSach(validDepartments);
-                System.out.println("\n>> Đã lưu thành công " + inserted + "/" + validDepartments.size() + " department vào cơ sở dữ liệu.");
-            } else {
-                System.out.println("\n>> Không có dữ liệu hợp lệ để lưu vào DB.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Lỗi khi đọc file CSV: " + e.getMessage());
+        int count = depController.importFromCSV(filePath);
+        if (count > 0) {
+            System.out.println("\n>> Đã lưu thành công " + count + " department vào cơ sở dữ liệu.");
+        } else {
+            System.out.println("\n>> Không có dữ liệu nào được thêm vào DB.");
         }
     }
 

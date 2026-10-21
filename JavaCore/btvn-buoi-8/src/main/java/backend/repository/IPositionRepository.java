@@ -2,6 +2,7 @@ package backend.repository;
 
 import entity.Position;
 import java.util.List;
+import java.util.Set;
 
 public interface IPositionRepository {
     List<Position> layTatCa();
@@ -13,4 +14,7 @@ public interface IPositionRepository {
     boolean capNhatTen(int id, String newName);
     boolean isPositionIdTonTai(int id);
     boolean isPositionNameTonTai(String name);
+
+    int demSoLuong();
+    Set<String> layTatCaNames();
 }

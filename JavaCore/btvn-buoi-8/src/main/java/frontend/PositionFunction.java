@@ -2,12 +2,6 @@ package frontend;
 
 import entity.Position;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class PositionFunction extends Function {
@@ -39,45 +33,17 @@ public class PositionFunction extends Function {
     }
 
     private void importPositionFromCSV() {
-        System.out.print("Nhập đường dẫn file CSV (mặc định 'position.csv'): ");
+        System.out.print("Nhập đường dẫn file CSV: ");
         String filePath = sc.nextLine().trim();
         if (filePath.isEmpty()) {
             filePath = "position.csv";
         }
 
-        List<String> validPositions = new ArrayList<>();
-
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
-             BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8))) {
-
-            String line;
-            int lineNumber = 0;
-
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                line = line.trim();
-                if (line.isEmpty() || (lineNumber == 1 && line.toLowerCase().startsWith("position_name"))) {
-                    continue;
-                }
-
-                String posName = line.split(",")[0].trim();
-                if (posController.isPositionNameTonTai(posName)) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Vị trí '" + posName + "' đã tồn tại -> Bỏ qua.");
-                    continue;
-                }
-
-                validPositions.add(posName);
-            }
-
-            if (!validPositions.isEmpty()) {
-                int inserted = posController.themDanhSach(validPositions);
-                System.out.println("\n>> Đã lưu thành công " + inserted + "/" + validPositions.size() + " position vào cơ sở dữ liệu.");
-            } else {
-                System.out.println("\n>> Không có dữ liệu hợp lệ để lưu vào DB.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Lỗi khi đọc file CSV: " + e.getMessage());
+        int count = posController.importFromCSV(filePath);
+        if (count > 0) {
+            System.out.println("\n>> Đã lưu thành công " + count + " position vào cơ sở dữ liệu.");
+        } else {
+            System.out.println("\n>> Không có dữ liệu nào được thêm vào DB.");
         }
     }
 

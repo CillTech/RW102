@@ -21,4 +21,8 @@ public class AccountController {
     public boolean isUsernameTonTai(String username) { return service.isUsernameTonTai(username); }
     public boolean isUsernameTonTai(String username, int excludeId) { return service.isUsernameTonTai(username, excludeId); }
     public boolean isAccountIdTonTai(int id) { return service.isAccountIdTonTai(id); }
+
+    public int importFromCSV(String filePath) {
+        return service.importFromCSV(filePath);
+    }
 }

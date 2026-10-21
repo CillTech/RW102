@@ -2,6 +2,7 @@ package backend.repository;
 
 import entity.Account;
 import java.util.List;
+import java.util.Set;
 
 public interface IAccountRepository {
     List<Account> layTatCa();
@@ -16,4 +17,8 @@ public interface IAccountRepository {
     boolean isUsernameTonTai(String username);
     boolean isUsernameTonTai(String username, int excludeId);
     boolean isAccountIdTonTai(int id);
+
+    int demSoLuong();
+    Set<String> layTatCaEmails();
+    Set<String> layTatCaUsernames();
 }

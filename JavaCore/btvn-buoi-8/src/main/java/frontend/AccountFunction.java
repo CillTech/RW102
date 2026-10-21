@@ -5,12 +5,6 @@ import entity.Account;
 import entity.Department;
 import entity.Position;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -46,88 +40,17 @@ public class AccountFunction extends Function {
     }
 
     private void importAccountFromCSV() {
-        System.out.print("Nhập đường dẫn file CSV (mặc định 'account.csv'): ");
+        System.out.print("Nhập đường dẫn file CSV: ");
         String filePath = sc.nextLine().trim();
         if (filePath.isEmpty()) {
             filePath = "account.csv";
         }
 
-        List<Account> validAccounts = new ArrayList<>();
-
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
-             BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8))) {
-
-            String line;
-            int lineNumber = 0;
-
-            while ((line = br.readLine()) != null) {
-                lineNumber++;
-                line = line.trim();
-                if (line.isEmpty() || (lineNumber == 1 && line.toLowerCase().startsWith("email"))) {
-                    continue;
-                }
-
-                String[] parts = line.split(",");
-                if (parts.length < 5) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Không đủ 5 cột dữ liệu -> Bỏ qua.");
-                    continue;
-                }
-
-                String email = parts[0].trim();
-                String username = parts[1].trim();
-                String fullName = parts[2].trim();
-                String depIdStr = parts[3].trim();
-                String posIdStr = parts[4].trim();
-
-                if (accController.isEmailTonTai(email)) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Email '" + email + "' đã tồn tại trong DB -> Bỏ qua.");
-                    continue;
-                }
-                if (accController.isUsernameTonTai(username)) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Username '" + username + "' đã tồn tại trong DB -> Bỏ qua.");
-                    continue;
-                }
-
-                int depId;
-                int posId;
-                try {
-                    depId = Integer.parseInt(depIdStr);
-                    posId = Integer.parseInt(posIdStr);
-                } catch (NumberFormatException e) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Department ID hoặc Position ID không phải số hợp lệ -> Bỏ qua.");
-                    continue;
-                }
-
-                Department dep = depController.layTheoId(depId);
-                if (dep == null) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Department ID = " + depId + " không tồn tại trong DB -> Bỏ qua.");
-                    continue;
-                }
-
-                Position pos = posController.layTheoId(posId);
-                if (pos == null) {
-                    System.out.println("[-] Dòng " + lineNumber + ": Position ID = " + posId + " không tồn tại trong DB -> Bỏ qua.");
-                    continue;
-                }
-
-                Account acc = new Account();
-                acc.setEmail(email);
-                acc.setUsername(username);
-                acc.setFullName(fullName);
-                acc.setDepartment(dep);
-                acc.setPosition(pos);
-                validAccounts.add(acc);
-            }
-
-            if (!validAccounts.isEmpty()) {
-                int inserted = accController.themDanhSach(validAccounts);
-                System.out.println("\n>> Đã lưu thành công " + inserted + "/" + validAccounts.size() + " account vào cơ sở dữ liệu.");
-            } else {
-                System.out.println("\n>> Không có dữ liệu hợp lệ để lưu vào DB.");
-            }
-
-        } catch (Exception e) {
-            System.out.println("Lỗi khi đọc file CSV: " + e.getMessage());
+        int count = accController.importFromCSV(filePath);
+        if (count > 0) {
+            System.out.println("\n>> Đã lưu thành công " + count + " account vào cơ sở dữ liệu.");
+        } else {
+            System.out.println("\n>> Không có dữ liệu nào được thêm vào DB.");
         }
     }
 

@@ -13,7 +13,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class AccountRepositoryImpl implements IAccountRepository {
 
@@ -80,13 +82,13 @@ public class AccountRepositoryImpl implements IAccountRepository {
             pstmt.setString(2, account.getUsername());
             pstmt.setString(3, account.getFullName());
 
-            if (account.getDepartment() != null) {
+            if (account.getDepartment() != null && account.getDepartment().getId() > 0) {
                 pstmt.setInt(4, account.getDepartment().getId());
             } else {
                 pstmt.setNull(4, Types.INTEGER);
             }
 
-            if (account.getPosition() != null) {
+            if (account.getPosition() != null && account.getPosition().getId() > 0) {
                 pstmt.setInt(5, account.getPosition().getId());
             } else {
                 pstmt.setNull(5, Types.INTEGER);
@@ -114,13 +116,13 @@ public class AccountRepositoryImpl implements IAccountRepository {
                     pstmt.setString(2, account.getUsername());
                     pstmt.setString(3, account.getFullName());
 
-                    if (account.getDepartment() != null) {
+                    if (account.getDepartment() != null && account.getDepartment().getId() > 0) {
                         pstmt.setInt(4, account.getDepartment().getId());
                     } else {
                         pstmt.setNull(4, Types.INTEGER);
                     }
 
-                    if (account.getPosition() != null) {
+                    if (account.getPosition() != null && account.getPosition().getId() > 0) {
                         pstmt.setInt(5, account.getPosition().getId());
                     } else {
                         pstmt.setNull(5, Types.INTEGER);
@@ -218,6 +220,53 @@ public class AccountRepositoryImpl implements IAccountRepository {
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    @Override
+    public int demSoLuong() {
+        String sql = "SELECT COUNT(*) FROM account_table";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    @Override
+    public Set<String> layTatCaEmails() {
+        Set<String> set = new HashSet<>();
+        String sql = "SELECT email FROM account_table";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                String val = rs.getString("email");
+                if (val != null) set.add(val.toLowerCase());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return set;
+    }
+
+    @Override
+    public Set<String> layTatCaUsernames() {
+        Set<String> set = new HashSet<>();
+        String sql = "SELECT username FROM account_table";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                String val = rs.getString("username");
+                if (val != null) set.add(val.toLowerCase());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return set;
     }
 
     private List<Account> layDanhSach(String sql, String param) {

@@ -19,4 +19,8 @@ public class PositionController {
 
     public boolean isPositionIdTonTai(int id) { return service.isPositionIdTonTai(id); }
     public boolean isPositionNameTonTai(String name) { return service.isPositionNameTonTai(name); }
+
+    public int importFromCSV(String filePath) {
+        return service.importFromCSV(filePath);
+    }
 }

@@ -5,13 +5,7 @@ import backend.repository.impl.PositionRepositoryImpl;
 import backend.service.IPositionService;
 import entity.Position;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -59,8 +53,7 @@ public class PositionServiceImpl implements IPositionService {
         List<String> validList = new ArrayList<>();
         List<String> errorLines = new ArrayList<>();
 
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(filePath));
-             BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath, StandardCharsets.UTF_8))) {
 
             String line;
             int lineNumber = 0;
@@ -121,7 +114,7 @@ public class PositionServiceImpl implements IPositionService {
     }
 
     private void xuatFileLoi(List<String> errorLines, String errorFilePath) {
-        try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(errorFilePath), StandardCharsets.UTF_8))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(errorFilePath, StandardCharsets.UTF_8))) {
             bw.write("position_name,error_messages");
             bw.newLine();
             for (String errLine : errorLines) {
